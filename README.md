@@ -1,16 +1,55 @@
-# React + Vite
+# Daily Todo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+마찰 없는 일일 투두리스트 앱. 앱을 열면 바로 오늘 날짜가 표시되고, 즉시 타이핑해서 할 일을 추가할 수 있습니다.
 
-Currently, two official plugins are available:
+## 주요 기능
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **즉시 입력**: 앱 실행 즉시 타이핑 → Enter로 할 일 추가
+- **타이머**: 각 할 일에 시간 측정 기능 (▶️ 버튼)
+- **카테고리**: 색상별 카테고리로 할 일 분류
+- **메모**: 할 일별 메모장 + 전체 메모장 (마크다운 지원)
+- **시간 통계**: 일별/주별/월별 시간 사용량 차트
+- **타임라인**: 24시간 시각화로 하루 활동 확인
+- **아카이브**: 캘린더에서 과거 기록 조회
+- **다크모드**: 라이트/다크/시스템 테마 지원
+- **자정 자동 전환**: 00:00에 새 날짜로 자동 리셋
 
-## React Compiler
+## 설치 및 실행
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 개발 모드
 
-## Expanding the ESLint configuration
+```bash
+npm install
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+http://localhost:5173 에서 실행됩니다.
+
+### 데스크톱 앱 빌드 (Electron)
+
+```bash
+npm run electron:build
+```
+
+`release/` 폴더에 DMG 파일이 생성됩니다.
+
+## 기술 스택
+
+- **Vite + React**: 빠른 개발 환경
+- **TipTap**: 실시간 마크다운 에디터
+- **Chart.js**: 시간 통계 시각화
+- **Electron**: 데스크톱 앱 패키징
+- **localStorage**: 로컬 데이터 저장
+
+## 데이터 저장
+
+모든 데이터는 브라우저의 localStorage에 저장됩니다:
+
+- `todos-YYYY-MM-DD`: 해당 날짜의 투두 목록
+- `dates-with-data`: 기록이 있는 날짜 목록
+- `categories`: 카테고리 설정
+- `theme`: 테마 설정
+
+## 라이선스
+
+MIT
