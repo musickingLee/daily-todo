@@ -40,7 +40,7 @@
 }
 
 .sidebar-left-content {
-  width: 200px;
+  width: 240px;
   max-width: 100%;
 }
 
@@ -239,7 +239,7 @@
 
 .fixed-schedule-input {
   width: 100%;
-  min-height: 120px;
+  min-height: 240px;
   padding: 12px;
   font-size: 13px;
   font-family: inherit;
