@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const DEFAULT_COLORS = [
   '#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899'
@@ -11,6 +11,18 @@ function CategorySidebar({ categories, onCategoriesChange }) {
   const [editingId, setEditingId] = useState(null)
   const [editName, setEditName] = useState('')
   const [editColor, setEditColor] = useState('')
+  const [fixedSchedule, setFixedSchedule] = useState('')
+
+  // 고정일정 로드
+  useEffect(() => {
+    const saved = localStorage.getItem('fixed-schedule')
+    if (saved) setFixedSchedule(saved)
+  }, [])
+
+  // 고정일정 저장
+  useEffect(() => {
+    localStorage.setItem('fixed-schedule', fixedSchedule)
+  }, [fixedSchedule])
 
   const handleAdd = () => {
     if (newName.trim()) {
@@ -131,6 +143,16 @@ function CategorySidebar({ categories, onCategoriesChange }) {
           + 카테고리 추가
         </button>
       )}
+
+      <div className="fixed-schedule-section">
+        <h3 className="sidebar-title">고정일정</h3>
+        <textarea
+          className="fixed-schedule-input"
+          value={fixedSchedule}
+          onChange={(e) => setFixedSchedule(e.target.value)}
+          placeholder="매일 반복되는 일정을 적어두세요..."
+        />
+      </div>
     </div>
   )
 }
