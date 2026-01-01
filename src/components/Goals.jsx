@@ -23,17 +23,31 @@ function getCurrentPeriodKeys() {
   }
 }
 
+// 주차의 시작일(월요일)과 종료일(일요일) 계산
+function getWeekRange(date) {
+  const d = new Date(date)
+  const day = d.getDay()
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1) // 월요일로 조정
+  const monday = new Date(d.setDate(diff))
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+
+  const formatDate = (d) => `${d.getMonth() + 1}/${d.getDate()}`
+  return `${formatDate(monday)} ~ ${formatDate(sunday)}`
+}
+
 // 기간 라벨 생성
 function getPeriodLabels() {
   const now = new Date()
   const year = now.getFullYear()
   const month = now.getMonth() + 1
   const week = getWeekNumber(now)
+  const weekRange = getWeekRange(now)
 
   return {
     year: `${year}년 목표`,
     month: `${month}월 목표`,
-    week: `${week}주차 목표`
+    week: `${week}주차 목표 (${weekRange})`
   }
 }
 
