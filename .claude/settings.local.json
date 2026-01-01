@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "Bash(npm run build:*)",
-      "Bash(npm run electron:build:*)"
+      "Bash(npm run electron:build:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(gh:*)",
+      "Bash(brew install:*)",
+      "Bash(ssh:*)",
+      "Bash(cat:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nREADME 프로젝트 설명 추가\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(mkdir:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

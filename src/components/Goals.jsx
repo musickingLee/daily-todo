@@ -37,6 +37,20 @@ function getPeriodLabels() {
   }
 }
 
+// 아카이브 함수 (컴포넌트 외부)
+function archiveGoals(type, key, goals) {
+  if (goals.length === 0) return
+
+  const archive = JSON.parse(localStorage.getItem('goals-archive') || '[]')
+  archive.push({
+    type,
+    key,
+    goals,
+    archivedAt: Date.now()
+  })
+  localStorage.setItem('goals-archive', JSON.stringify(archive))
+}
+
 function Goals() {
   const [yearGoals, setYearGoals] = useState([])
   const [monthGoals, setMonthGoals] = useState([])
@@ -86,16 +100,51 @@ function Goals() {
     return () => clearInterval(interval)
   }, [periodKeys, yearGoals, monthGoals, weekGoals])
 
-  // 로드
+  // 로드 및 기간 지난 데이터 아카이브
   useEffect(() => {
     isInitialLoad.current = true
-    const keys = getCurrentPeriodKeys()
-    setPeriodKeys(keys)
+    const currentKeys = getCurrentPeriodKeys()
+    setPeriodKeys(currentKeys)
     setPeriodLabels(getPeriodLabels())
 
-    const loadedYear = JSON.parse(localStorage.getItem(keys.year) || '[]')
-    const loadedMonth = JSON.parse(localStorage.getItem(keys.month) || '[]')
-    const loadedWeek = JSON.parse(localStorage.getItem(keys.week) || '[]')
+    // 저장된 마지막 기간 키 확인
+    const lastKeys = JSON.parse(localStorage.getItem('goals-last-period-keys') || 'null')
+
+    // 이전 기간 데이터가 있으면 아카이브
+    if (lastKeys) {
+      // 연간 목표: 연도가 바뀌었으면 아카이브
+      if (lastKeys.year && lastKeys.year !== currentKeys.year) {
+        const oldYearGoals = JSON.parse(localStorage.getItem(lastKeys.year) || '[]')
+        if (oldYearGoals.length > 0) {
+          archiveGoals('year', lastKeys.year, oldYearGoals)
+          localStorage.removeItem(lastKeys.year)
+        }
+      }
+      // 월간 목표: 월이 바뀌었으면 아카이브
+      if (lastKeys.month && lastKeys.month !== currentKeys.month) {
+        const oldMonthGoals = JSON.parse(localStorage.getItem(lastKeys.month) || '[]')
+        if (oldMonthGoals.length > 0) {
+          archiveGoals('month', lastKeys.month, oldMonthGoals)
+          localStorage.removeItem(lastKeys.month)
+        }
+      }
+      // 주간 목표: 주가 바뀌었으면 아카이브
+      if (lastKeys.week && lastKeys.week !== currentKeys.week) {
+        const oldWeekGoals = JSON.parse(localStorage.getItem(lastKeys.week) || '[]')
+        if (oldWeekGoals.length > 0) {
+          archiveGoals('week', lastKeys.week, oldWeekGoals)
+          localStorage.removeItem(lastKeys.week)
+        }
+      }
+    }
+
+    // 현재 기간 키 저장
+    localStorage.setItem('goals-last-period-keys', JSON.stringify(currentKeys))
+
+    // 현재 기간 데이터 로드
+    const loadedYear = JSON.parse(localStorage.getItem(currentKeys.year) || '[]')
+    const loadedMonth = JSON.parse(localStorage.getItem(currentKeys.month) || '[]')
+    const loadedWeek = JSON.parse(localStorage.getItem(currentKeys.week) || '[]')
 
     setYearGoals(loadedYear)
     setMonthGoals(loadedMonth)
@@ -121,20 +170,6 @@ function Goals() {
     if (isInitialLoad.current) return
     localStorage.setItem(periodKeys.week, JSON.stringify(weekGoals))
   }, [weekGoals, periodKeys.week])
-
-  // 아카이브 함수
-  const archiveGoals = (type, key, goals) => {
-    if (goals.length === 0) return
-
-    const archive = JSON.parse(localStorage.getItem('goals-archive') || '[]')
-    archive.push({
-      type,
-      key,
-      goals,
-      archivedAt: Date.now()
-    })
-    localStorage.setItem('goals-archive', JSON.stringify(archive))
-  }
 
   // 목표 추가
   const addGoal = (type, text) => {

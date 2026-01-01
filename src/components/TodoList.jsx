@@ -11,6 +11,8 @@ function TodoList({ dateKey, dateDisplay, isToday, categories, onTimerUpdate }) 
   const [editingTodoId, setEditingTodoId] = useState(null)
   const [editingText, setEditingText] = useState('')
   const [activeTimerId, setActiveTimerId] = useState(null)
+  const [inputCategoryId, setInputCategoryId] = useState(null)
+  const [showInputCategoryPicker, setShowInputCategoryPicker] = useState(false)
   const [, setTick] = useState(0)
   const [draggedId, setDraggedId] = useState(null)
   const [dragOverId, setDragOverId] = useState(null)
@@ -99,14 +101,19 @@ function TodoList({ dateKey, dateDisplay, isToday, categories, onTimerUpdate }) 
         text: inputValue.trim(),
         completed: false,
         memo: '',
-        categoryId: null,
+        categoryId: inputCategoryId,
         timeSpent: 0,
         timerStartedAt: null,
-        sessions: [] // New: array of {start, end} timestamps
+        sessions: []
       }
       setTodos([...todos, newTodo])
       setInputValue('')
+      // 카테고리는 유지 (계속 같은 카테고리로 입력할 수 있도록)
     }
+  }
+
+  const getInputCategory = () => {
+    return categories.find(c => c.id === inputCategoryId)
   }
 
   const toggleTodo = (id) => {
@@ -484,15 +491,46 @@ function TodoList({ dateKey, dateDisplay, isToday, categories, onTimerUpdate }) 
 
       {isToday && (
         <div className="input-area">
-          <input
-            ref={inputRef}
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="할 일을 입력하고 Enter..."
-            className="todo-input"
-          />
+          <div className="input-row">
+            <button
+              className="input-category-btn"
+              onClick={() => setShowInputCategoryPicker(!showInputCategoryPicker)}
+              style={getInputCategory() ? { color: getInputCategory().color } : {}}
+              title="카테고리 선택"
+            >
+              {getInputCategory() ? '●' : '○'}
+            </button>
+            <input
+              ref={inputRef}
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="할 일을 입력하고 Enter..."
+              className="todo-input"
+            />
+          </div>
+          {showInputCategoryPicker && (
+            <div className="input-category-picker">
+              <button
+                className={`category-option ${!inputCategoryId ? 'selected' : ''}`}
+                onClick={() => { setInputCategoryId(null); setShowInputCategoryPicker(false); }}
+              >
+                <span className="category-option-color" style={{ background: '#ccc' }}>○</span>
+                <span>없음</span>
+              </button>
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  className={`category-option ${inputCategoryId === cat.id ? 'selected' : ''}`}
+                  onClick={() => { setInputCategoryId(cat.id); setShowInputCategoryPicker(false); }}
+                >
+                  <span className="category-option-color" style={{ background: cat.color }}>●</span>
+                  <span>{cat.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
