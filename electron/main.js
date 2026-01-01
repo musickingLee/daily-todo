@@ -3,8 +3,8 @@ const path = require('path')
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1000,
-    height: 700,
+    width: 1200,
+    height: 900,
     minWidth: 400,
     minHeight: 500,
     titleBarStyle: 'hiddenInset',
