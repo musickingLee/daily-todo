@@ -3,11 +3,14 @@ import TodoList from './components/TodoList'
 import Calendar from './components/Calendar'
 import CategorySidebar from './components/CategorySidebar'
 import TimeStats from './components/TimeStats'
+import Goals from './components/Goals'
+import GoalsArchive from './components/GoalsArchive'
 import './App.css'
 
 function App() {
   const [activeTab, setActiveTab] = useState('todo')
   const [selectedDate, setSelectedDate] = useState(null)
+  const [showGoalsArchive, setShowGoalsArchive] = useState(false)
   const [categories, setCategories] = useState([])
   const [timerTick, setTimerTick] = useState(0)
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'system')
@@ -147,6 +150,12 @@ function App() {
 
   const handleBackToCalendar = () => {
     setSelectedDate(null)
+    setShowGoalsArchive(false)
+  }
+
+  const handleViewGoalsArchive = () => {
+    setShowGoalsArchive(true)
+    setSelectedDate(null)
   }
 
   const handleTimerUpdate = useCallback(() => {
@@ -179,8 +188,14 @@ function App() {
             Today
           </button>
           <button
+            className={`tab ${activeTab === 'goals' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('goals'); setSelectedDate(null); }}
+          >
+            Goals
+          </button>
+          <button
             className={`tab ${activeTab === 'archive' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('archive'); setSelectedDate(null); }}
+            onClick={() => { setActiveTab('archive'); setSelectedDate(null); setShowGoalsArchive(false); }}
           >
             Archive
           </button>
@@ -202,6 +217,10 @@ function App() {
               categories={categories}
               onTimerUpdate={handleTimerUpdate}
             />
+          ) : activeTab === 'goals' ? (
+            <Goals />
+          ) : showGoalsArchive ? (
+            <GoalsArchive onBack={handleBackToCalendar} />
           ) : selectedDate ? (
             <div className="archive-detail">
               <button className="back-btn" onClick={handleBackToCalendar}>
@@ -215,7 +234,11 @@ function App() {
               />
             </div>
           ) : (
-            <Calendar onDateSelect={handleDateSelect} onMonthChange={handleMonthChange} />
+            <Calendar
+              onDateSelect={handleDateSelect}
+              onMonthChange={handleMonthChange}
+              onViewGoalsArchive={handleViewGoalsArchive}
+            />
           )}
         </main>
       </div>

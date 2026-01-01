@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-function Calendar({ onDateSelect, onMonthChange }) {
+function Calendar({ onDateSelect, onMonthChange, onViewGoalsArchive }) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [datesWithData, setDatesWithData] = useState([])
 
@@ -90,6 +90,10 @@ function Calendar({ onDateSelect, onMonthChange }) {
       <div className="calendar-grid">
         {days}
       </div>
+
+      <button className="view-goals-archive-btn" onClick={onViewGoalsArchive}>
+        🎯 과거 목표 기록 보기
+      </button>
     </div>
   )
 }

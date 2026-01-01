@@ -27,10 +27,12 @@ npm run build      # 프로덕션 빌드
 
 ```
 src/
-├── App.jsx              # 메인 앱, 탭 전환 (Today/Archive)
+├── App.jsx              # 메인 앱, 탭 전환 (Today/Goals/Archive)
 ├── components/
-│   ├── TodoList.jsx     # 투두 입력/표시/체크/수정/타이머 기능
+│   ├── TodoList.jsx     # 투두 입력/표시/체크/수정/타이머/드래그 순서변경
 │   ├── Calendar.jsx     # 월별 캘린더, 과거 기록 조회
+│   ├── Goals.jsx        # 연간/월간/주간 목표 관리
+│   ├── GoalsArchive.jsx # 과거 목표 아카이브 조회
 │   ├── MemoModal.jsx    # 전체 메모장 모달 (TipTap)
 │   ├── TipTapEditor.jsx # 실시간 마크다운 에디터
 │   ├── CategorySidebar.jsx  # 카테고리 관리 사이드바
@@ -44,6 +46,10 @@ src/
 - `dates-with-data`: 기록이 있는 날짜 목록 (캘린더 표시용)
 - `categories`: 카테고리 목록
 - `theme`: 테마 설정 (light/dark/system)
+- `goals-year-YYYY`: 연간 목표 배열
+- `goals-month-YYYY-MM`: 월간 목표 배열
+- `goals-week-YYYY-WNN`: 주간 목표 배열 (ISO 주차)
+- `goals-archive`: 기간이 지난 목표들의 아카이브
 
 ## 구현 완료
 
@@ -88,3 +94,12 @@ src/
 - [x] 테마 전환 기능 (☀️ 라이트 / 🌙 다크 / 💻 시스템)
 - [x] Archive 통계 기능 (월별/연별 통계, 캘린더 월 이동 시 자동 업데이트)
 - [x] 차트 시간 레이블 개선 (짧은 형식 1h30m + 45도 회전)
+- [x] 드래그 앤 드롭으로 할 일 순서 변경
+- [x] Goals 탭 (Today와 Archive 사이)
+  - 이번 해 / 이번 달 / 이번 주 목표 관리
+  - 체크박스로 완료 표시
+  - 더블클릭으로 목표 수정
+  - 주/월/년 전환 시 자동 아카이브
+- [x] 과거 목표 기록 조회 (Archive에서 버튼 클릭)
+  - 연간/월간/주간 필터링
+  - 완료 통계 표시

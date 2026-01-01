@@ -12,6 +12,8 @@ function TodoList({ dateKey, dateDisplay, isToday, categories, onTimerUpdate }) 
   const [editingText, setEditingText] = useState('')
   const [activeTimerId, setActiveTimerId] = useState(null)
   const [, setTick] = useState(0)
+  const [draggedId, setDraggedId] = useState(null)
+  const [dragOverId, setDragOverId] = useState(null)
   const inputRef = useRef(null)
   const editInputRef = useRef(null)
   const isInitialLoad = useRef(true)
@@ -284,6 +286,50 @@ function TodoList({ dateKey, dateDisplay, isToday, categories, onTimerUpdate }) 
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  // Drag and drop handlers
+  const handleDragStart = (e, id) => {
+    if (!isToday) return
+    setDraggedId(id)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  const handleDragOver = (e, id) => {
+    e.preventDefault()
+    if (!isToday || draggedId === id) return
+    setDragOverId(id)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverId(null)
+  }
+
+  const handleDrop = (e, targetId) => {
+    e.preventDefault()
+    if (!isToday || !draggedId || draggedId === targetId) {
+      setDraggedId(null)
+      setDragOverId(null)
+      return
+    }
+
+    const draggedIndex = todos.findIndex(t => t.id === draggedId)
+    const targetIndex = todos.findIndex(t => t.id === targetId)
+
+    if (draggedIndex === -1 || targetIndex === -1) return
+
+    const newTodos = [...todos]
+    const [draggedItem] = newTodos.splice(draggedIndex, 1)
+    newTodos.splice(targetIndex, 0, draggedItem)
+
+    setTodos(newTodos)
+    setDraggedId(null)
+    setDragOverId(null)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedId(null)
+    setDragOverId(null)
+  }
+
   const modalTodo = todos.find(t => t.id === modalTodoId)
 
   return (
@@ -295,8 +341,19 @@ function TodoList({ dateKey, dateDisplay, isToday, categories, onTimerUpdate }) 
           const category = getCategory(todo.categoryId)
           const elapsed = getElapsedTime(todo)
           const isTimerRunning = activeTimerId === todo.id
+          const isDragging = draggedId === todo.id
+          const isDragOver = dragOverId === todo.id
           return (
-            <div key={todo.id} className="todo-item-wrapper">
+            <div
+              key={todo.id}
+              className={`todo-item-wrapper ${isDragging ? 'dragging' : ''} ${isDragOver ? 'drag-over' : ''}`}
+              draggable={isToday}
+              onDragStart={(e) => handleDragStart(e, todo.id)}
+              onDragOver={(e) => handleDragOver(e, todo.id)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, todo.id)}
+              onDragEnd={handleDragEnd}
+            >
               <div
                 className={`todo-item ${todo.completed ? 'completed' : ''}`}
                 style={category ? { borderLeftColor: category.color, borderLeftWidth: '4px' } : {}}
